@@ -6,7 +6,7 @@ const cheerio = require("cheerio");
 const db = require("./modules");
 const PORT = 3000;
 const app = express();
-
+const exphbs = require("express-handlebars")
 // use morgan logger for logging requests
 app.use(logger("dev"));
 //Parse request body as JSON
@@ -15,34 +15,54 @@ app.use(express.urlencoded({
 }));
 app.use(express.json());
 //Make public a static folder
-app.use(express.static("public"));
+app.use(express.static(__dirname + "/public"));
+app.engine(
+    "handlebars", 
+    exphbs({
+    defaultLayout: "main",
 
+}))
+app.set("view engine", "handlebars")
 //Connect to the Mongo DB
 mongoose.connect("mongodb://localhost/webScraper", {
     useNewUrlParser: true
 });
 
 //Routes
+app.get("/", function(req, res) {
+    db.Article.find({"saved":false}, function( err,data) {
+      var hbsObject = {
+        article: data
+      };
+      console.log(hbsObject);
+      res.render("index", hbsObject);
+    });
+  });
 
 //A GET route for scraping the website
 app.get("/scrape", function(req, res) {
     // First, we grab the body of the html with axios
-    axios.get("http://www.thrashermagazine.com/").then(function(response) {
+    axios.get("https://stackoverflow.com/questions/tagged/javascript").then(function(response) {
       // Then, we load that into cheerio and save it to $ for a shorthand selector
       var $ = cheerio.load(response.data);
-  
       // Now, we grab every h2 within an article tag, and do the following:
-      $("h4").each(function(i, element) {
+      $(".summary").each(function(i, element) {
         // Save an empty result object
         var result = {};
-  
+        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + $(this)+"/n--/n--/n/----n/n---/")
         // Add the text and href of every link, and save them as properties of the result object
         result.title = $(this)
+          
+          .children("h3")
           .children("a")
           .text();
-        result.link = "http:/www.thrashermagazine.com" + $(this)
+        result.link ="https://stackoverflow.com"+ $(this)
+          .children("h3")
           .children("a")
           .attr("href");
+        result.body = $(this)
+          .children(".excerpt")
+          .text()
   
         // Create a new Article using the `result` object built from scraping
         db.Article.create(result)
@@ -93,6 +113,22 @@ app.post("/articles/:id", function(req,res){
         })
         .catch(function(err){
             res.json(err)});
+});
+
+app.post("/articles/save/:id", function(req, res) {
+    // Use the article id to find and update its saved boolean
+    Article.findOneAndUpdate({ "_id": req.params.id }, { "saved": true})
+    // Execute the above query
+    .exec(function(err, doc) {
+      // Log any errors
+      if (err) {
+        console.log(err);
+      }
+      else {
+        // Or send the document to the browser
+        res.send(doc);
+      }
+    });
 });
 
 app.listen(PORT, function(){

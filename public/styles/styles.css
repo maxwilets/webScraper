@@ -1,0 +1,55 @@
+body { background-color: #c2c2c6 }
+
+hr{
+    position: absolute;
+    color: red;
+    background-color: red;
+    bottom: 95%
+}
+#mainhead {
+    background-color: rgb(125,129,134);
+    padding-bottom: 0.5%;
+}
+#otherhead {
+    background-color:(rgb(200, 145, 153));
+    padding-top: 0.5%;
+}
+#wrapper {
+  width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 5%;
+  
+}
+#articles {
+  display: inline-block;
+  overflow: auto;
+  width: 60%;
+  height: 700px;
+}
+#notes {
+  float: right;
+  width: 30%;
+}
+
+.btn{
+    background-color: rgb(245,146,68);
+    border: 1px rgb(125,129,134) solid
+}
+.topper{
+    border: 2px double black;
+    padding: 10px
+}
+textarea, input {
+  display: block;
+  width: 100%;
+  background-color: #FCF5C7;
+}
+input {
+  height: 36px;
+  font-size: 24px;
+}
+textarea {
+  height: 200px;
+  font-size: 18px;
+}

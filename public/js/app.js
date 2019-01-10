@@ -1,13 +1,13 @@
 // Grab the articles as a json
 $.getJSON("/articles", function(data) {
     // For each one
-    for (var i = 0; i < data.length; i++) {
+    for (var i = 2; i < data.length; i++) {
       // Display the apropos information on the page
       $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].link + "</p>");
     }
   });
-  
-  
+
+
   // Whenever someone clicks a p tag
   $(document).on("click", "p", function() {
     // Empty the notes from the note section
@@ -70,3 +70,20 @@ $.getJSON("/articles", function(data) {
     $("#titleinput").val("");
     $("#bodyinput").val("");
   });
+
+  $("#home").on("click", function(){
+    console.log('clicked');
+    alert("clicked")
+})
+
+$("#yes").on("click", function() {
+    console.log('clicked')
+  $.ajax({
+      method: "GET",
+      url: "/scrape",
+  }).done(function(data) {
+      console.log(data)
+      alert("Scraped up to Date!")
+      window.location = "/"
+  })
+});

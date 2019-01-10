@@ -1,0 +1,21 @@
+
+    
+      <hr />
+      <div class="container text-center">
+    
+      <div id="wrapper">
+      
+      <div id="notes"></div>
+    
+    <div id="articles" class="topper">
+    {{#each article}}
+    
+    <h5><a href="{{this.link}}" target="_blank">{{this.title}}</a></h4>
+    <p data-id={{this._id}}>{{this.body}}</p>
+
+    <button class="btn save" data-id={{this._id}} style="margin-bottom:2%">Save Article</button>
+    {{/each}}
+    </div>
+    </div>
+    </div>
+    
