@@ -30,11 +30,14 @@ mongoose.connect("mongodb://localhost/webScraper", {
 
 //Routes
 app.get("/", function(req, res) {
-    db.Article.find({"saved":false}, function( err,data) {
+    db.Article.updateMany({}, {"saved": false}, function(err,data){
+        console.log("updated")
+    })
+    db.Article.find({}, function( err,data) {
       var hbsObject = {
         article: data
       };
-      console.log(hbsObject);
+    //  console.log(hbsObject);
       res.render("index", hbsObject);
     });
   });
