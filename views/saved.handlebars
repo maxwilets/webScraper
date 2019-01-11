@@ -1,0 +1,17 @@
+<div class="container text-center">
+    <h3>Saved Articles</h3>
+    <div id="wrapper">
+      
+      <div id="notes"></div>
+    
+    <div id="articles" class="topper">
+    {{#each article}}
+    
+    <h5><a href="{{this.link}}" target="_blank">{{this.title}}</a></h5>
+    <p data-id={{this._id}}>{{this.body}}</p>
+
+    <button class="btn unsave" data-id={{this._id}} style="margin-bottom:2%">Remove from Saved</button>
+    {{/each}}
+    </div>
+    </div>
+</div>

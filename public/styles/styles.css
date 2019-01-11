@@ -10,7 +10,7 @@ hr{
     background-color: rgb(125,129,134);
     padding-bottom: 0.5%;
 }
-#otherhead {
+#otherhead, #overhead1 {
     background-color:(rgb(200, 145, 153));
     padding-top: 0.5%;
 }

@@ -1,16 +1,10 @@
-// Grab the articles as a json
-$.getJSON("/articles", function(data) {
-    // For each one
-    for (var i = 2; i < data.length; i++) {
-      // Display the apropos information on the page
-      $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].link + "</p>");
-    }
-  });
+
 
 
   // Whenever someone clicks a p tag
   $(document).on("click", "p", function() {
     // Empty the notes from the note section
+    console.log("what up")
     $("#notes").empty();
     // Save the id from the p tag
     var thisId = $(this).attr("data-id");
@@ -22,7 +16,28 @@ $.getJSON("/articles", function(data) {
     })
       // With that done, add the note information to the page
       .then(function(data) {
-        console.log(data);
+        if (data.note.length > 0) {
+          
+            $.ajax({
+              method: "GET",
+              url: "/articles/" + thisId
+            })
+            .then(function(data){
+              for(let i =0; i < data.note.length; i++){
+                $("#notes").append("<h5>" + data.note[i].title + "</h5>")
+                $("#notes").append("<p>" + data.note[i].body + "</p>")
+              }
+            })
+          
+          console.log("yes")
+          $("#notes").append("<h5>" )
+          // Place the title of the note in the title input
+          $("#titleinput").val(data.note.title);
+          // Place the body of the note in the body textarea
+          $("#bodyinput").val(data.note.body);
+        }
+        else{
+        console.log(data.note);
         // The title of the article
         $("#notes").append("<h2>" + data.title + "</h2>");
         // An input to enter a new title
@@ -31,17 +46,37 @@ $.getJSON("/articles", function(data) {
         $("#notes").append("<textarea id='bodyinput' name='body'></textarea>");
         // A button to submit a new note, with the id of the article saved to it
         $("#notes").append("<button data-id='" + data._id + "' id='savenote'>Save Note</button>");
-  
-        // If there's a note in the article
-        if (data.note) {
-          // Place the title of the note in the title input
-          $("#titleinput").val(data.note.title);
-          // Place the body of the note in the body textarea
-          $("#bodyinput").val(data.note.body);
         }
+        // If there's a note in the article
+       
       });
   });
   
+  $(document).on("click", ".btn.save", function(){
+    var thisId = $(this).attr("data-id")
+    console.log("saved!")
+    $.ajax({
+      method:"POST",
+      url: "/articles/save/" + thisId
+    })
+  })
+
+  $(document).on("click", ".btn#home", function(){
+    console.log('homebutton working')
+    window.location = "/home"
+  })
+  $(document).on("click", ".btn#saved", function(){
+    window.location = "/saved"
+  });
+
+  $(document).on("click", ".btn.unsave", function(){
+    thisID = $(this).attr("data-id")
+    console.log('unsaved')
+    $.ajax({
+      method: "POST",
+      url: "/saved/delete/" + thisID
+    }).then(location.reload())
+  })
   // When you click the savenote button
   $(document).on("click", "#savenote", function() {
     // Grab the id associated with the article from the submit button
@@ -50,10 +85,10 @@ $.getJSON("/articles", function(data) {
     // Run a POST request to change the note, using what's entered in the inputs
     $.ajax({
       method: "POST",
-      url: "/articles/" + thisId,
+      url: "/notes/save/" + thisId,
       data: {
         // Value taken from title input
-        title: $("#titleinput").val(),
+        title: $("#titleinput").val(), 
         // Value taken from note textarea
         body: $("#bodyinput").val()
       }
@@ -71,19 +106,5 @@ $.getJSON("/articles", function(data) {
     $("#bodyinput").val("");
   });
 
-  $("#home").on("click", function(){
-    console.log('clicked');
-    alert("clicked")
-})
 
-$("#yes").on("click", function() {
-    console.log('clicked')
-  $.ajax({
-      method: "GET",
-      url: "/scrape",
-  }).done(function(data) {
-      console.log(data)
-      alert("Scraped up to Date!")
-      window.location = "/"
-  })
-});
+

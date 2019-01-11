@@ -30,18 +30,34 @@ mongoose.connect("mongodb://localhost/webScraper", {
 
 //Routes
 app.get("/", function(req, res) {
-    db.Article.updateMany({}, {"saved": false}, function(err,data){
+    db.Article.updateMany({"saved":true}, {"saved": false}, function(err,data){
         console.log("updated")
     })
     db.Article.find({}, function( err,data) {
-      var hbsObject = {
+      let hbsObject = {
         article: data
       };
-    //  console.log(hbsObject);
       res.render("index", hbsObject);
     });
   });
 
+app.get("/home", function(req,res){
+    db.Article.find({}, function(err,data){
+        var hbsObject = {
+            article:data
+        };
+        res.render("index", hbsObject)
+    })
+})
+//route to viewing saved articles
+app.get("/saved", function(req,res){
+    db.Article.find({"saved":true},function(err,data){
+        var hbsObject = {
+            article: data
+        }
+        res.render("saved",hbsObject)
+    })
+})
 //A GET route for scraping the website
 app.get("/scrape", function(req, res) {
     // First, we grab the body of the html with axios
@@ -107,20 +123,32 @@ app.get("/articles/:id", function(req,res){
           res.json(err)});
 });
 
-app.post("/articles/:id", function(req,res){
+app.post("/notes/save/:id", function(req,res){
+    var hid = req.params.id
+    
     //creates a new note 
     db.Note.create(req.body)
-      .then(dbNote=>{db.Artible.findOneAndUpdate({_id:req.params.id}, {note: dbNote._id},{new:true})})
-        .then(function(dbArtice){
-            res.json(dbArticle);
+      .then(function(dbNote){
+          console.log(hid)
+          db.Article.update({"_id":hid}, {$push:{"note": dbNote._id}})
+        .exec(function(err,doc){
+            if(err){
+                console.log(err)
+            }
+            else{res.send(doc)
+            console.log(doc)}
+            
         })
-        .catch(function(err){
-            res.json(err)});
+    })
+           
+           
+        
+      
 });
 
 app.post("/articles/save/:id", function(req, res) {
     // Use the article id to find and update its saved boolean
-    Article.findOneAndUpdate({ "_id": req.params.id }, { "saved": true})
+    db.Article.findOneAndUpdate({ "_id": req.params.id }, { "saved": true})
     // Execute the above query
     .exec(function(err, doc) {
       // Log any errors
@@ -133,6 +161,19 @@ app.post("/articles/save/:id", function(req, res) {
       }
     });
 });
+//route for unsaving an article
+app.post("/saved/delete/:id", function(req,res){
+    //updates the article to not saved
+    db.Article.findOneAndUpdate({"_id": req.params.id}, {"saved":false})
+    .exec(function(err,doc){
+        if(err){
+            console.log(err)
+        }
+        else {
+            res.send(doc)
+        }
+    })
+})
 
 app.listen(PORT, function(){
     console.log("App running on port " + PORT+ "!")
