@@ -23,9 +23,10 @@
               url: "/articles/" + thisId
             })
             .then(function(data){
+              $("#notes").append("<h3 id='noter'>Comments</h3>")
               for(let i =0; i < data.note.length; i++){
-                $("#notes").append("<h5>" + data.note[i].title + "</h5>")
-                $("#notes").append("<p>" + data.note[i].body + "</p>")
+                $("#notes").append("<div class='notediv' <h5>" + data.note[i].title + "</h5><p>"+ data.note[i].body+"</p></div>")
+                data.note[i].new ? $("#notes").append("<button class='btn removeNote'>Remove Comment</button>"):console.log("no new")
               }
             })
           

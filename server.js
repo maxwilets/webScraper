@@ -33,6 +33,9 @@ app.get("/", function(req, res) {
     db.Article.updateMany({"saved":true}, {"saved": false}, function(err,data){
         console.log("updated")
     })
+    db.Note.updateMany({"new": true},{"new":false}, function(err,data){
+        console.log("updated")
+    })
     db.Article.find({}, function( err,data) {
       let hbsObject = {
         article: data
@@ -122,7 +125,11 @@ app.get("/articles/:id", function(req,res){
       .catch(function(err){
           res.json(err)});
 });
-
+//the route for getting notes
+app.get("/notes/:id", function(req,res){
+   db.Note.findOne({"_id":req.params.id})
+})
+//route for adding a new note
 app.post("/notes/save/:id", function(req,res){
     var hid = req.params.id
     
@@ -130,6 +137,7 @@ app.post("/notes/save/:id", function(req,res){
     db.Note.create(req.body)
       .then(function(dbNote){
           console.log(hid)
+          //gives pushes into the notes array the id of the note
           db.Article.update({"_id":hid}, {$push:{"note": dbNote._id}})
         .exec(function(err,doc){
             if(err){
@@ -161,6 +169,16 @@ app.post("/articles/save/:id", function(req, res) {
       }
     });
 });
+app.post("/notes/delete:id", function(req, res) {
+    db.Note.findOneAndDelete({"_id":req.params.id}, function(err, doc){
+        if (err){
+            console.log(err)
+        }
+        else{
+            res.send(doc)
+        }
+    })
+})
 //route for unsaving an article
 app.post("/saved/delete/:id", function(req,res){
     //updates the article to not saved

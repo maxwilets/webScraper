@@ -3,7 +3,11 @@ const Schema = mongoose.Schema;
 
 const NoteSchema = new Schema({
     title: String,
-    body: String
+    body: String,
+    new :{
+        type: Boolean,
+        default: true
+    }
 });
 
 const Note = mongoose.model("Note", NoteSchema);
