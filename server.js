@@ -24,7 +24,7 @@ app.engine(
 }))
 app.set("view engine", "handlebars")
 //Connect to the Mongo DB
-var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/home"
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/webScraper"
 mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true
 });
@@ -38,9 +38,8 @@ app.get("/", function(req, res) {
         console.log("updated")
     })
     db.Article.find({}, function( err,data) {
-      let hbsObject = {
-        article: data
-      };
+    
+     // res.render("index", hbsObject)
       res.redirect("/home")
     });
   })
