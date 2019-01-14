@@ -41,9 +41,9 @@ app.get("/", function(req, res) {
       let hbsObject = {
         article: data
       };
-      res.render("index", hbsObject);
+      res.redirect("/home")
     });
-  });
+  })
 
 app.get("/home", function(req,res){
     db.Article.find({}, function(err,data){
