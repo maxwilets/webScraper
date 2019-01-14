@@ -170,12 +170,13 @@ app.post("/articles/save/:id", function(req, res) {
     });
 });
 app.post("/notes/delete:id", function(req, res) {
-    db.Note.findOneAndDelete({"_id":req.params.id}, function(err, doc){
-        if (err){
-            console.log(err)
+    console.log(req.params.id)
+    db.Note.deleteOne({"_id":req.params.id}, function(err,doc){
+        if(err){
+            throw(err)
         }
-        else{
-            res.send(doc)
+        else {
+            res.send("note deleted");
         }
     })
 })
