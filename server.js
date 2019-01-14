@@ -169,20 +169,24 @@ app.post("/articles/save/:id", function(req, res) {
       }
     });
 });
-app.post("/notes/delete:id", function(req, res) {
-    console.log(req.params.id)
-    db.Note.deleteOne({"_id":req.params.id}, function(err,doc){
-        if(err){
-            throw(err)
-        }
-        else {
-            res.send("note deleted");
-        }
+app.post("/notes/delete/:id/:art", function(req, res) {
+    db.Note.deleteOne({"_id":req.params.id}).then(function(dbArticle){
+        console.log("Howdy ho whats up this is cool")
+        console.log("weeee")
+        console.log("GJOIEGJWQIgioenwionggeiwonioegnwio")
+        res.json(dbArticle)
+    }).then(function(){
+        db.Article.findOneAndUpdate({"_id": req.params.art},{$pull:{"notes": req.params.art} })
+        .then(function(dat){
+            res.json(data)
+        })
     })
 })
+
 //route for unsaving an article
 app.post("/saved/delete/:id", function(req,res){
     //updates the article to not saved
+  
     db.Article.findOneAndUpdate({"_id": req.params.id}, {"saved":false})
     .exec(function(err,doc){
         if(err){

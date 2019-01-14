@@ -18,8 +18,8 @@ $(document).on("click", "p", function () {
             $("#notes").append("<h2>" + data.title + "</h2>");
             $("#notes").append("<h3 id='noter'>Comments</h3>")
             for (let i = 0; i < data.note.length; i++) {
-              $("#notes").append("<div class='notediv' <h5>" + data.note[i].title + "</h5><p>" + data.note[i].body + "</p></div>")
-              data.note[i].new ? $("#notes").append("<button class='btn removeNote' data-id='" + data.note[i]._id + "'>Remove Comment</button>") : console.log("no new")
+              $("#notes").append("<div class='notediv' <h5>" + data.note[i].title + "</h5><p>" + data.note[i].body + "p>")
+              data.note[i].new ? $("#notes").append("<button class='btn removeNote' data-id=" + data.note[i]._id + " data-article="+ data._id + ">Remove Comment</button></div>") : console.log("no new")
             }
             // An input to enter a new title
             $("#notes").append("<input id='titleinput' name='title' >");
@@ -77,10 +77,11 @@ $(document).on("click", ".btn.unsave", function () {
 })
 $(document).on("click", ".btn.removeNote", function(){
   var thisId = $(this).attr("data-id");
+  var thisArt = $(this).attr("data-article")
 
   $.ajax({
     method: "POST",
-    url: "/notes/delete/" + thisId,
+    url: "/notes/delete/" + thisId + "/" + thisArt
   }).then(window.location="/home", alert("comment deleted"))
 })
 // When you click the savenote button
